@@ -1,6 +1,5 @@
 import React, { Component, Dimensions } from 'react';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
 import Matter from 'matter-js';
 
 import { AudioPlayer, Body, Sprite } from 'react-game-kit';
@@ -9,8 +8,9 @@ import { AudioPlayer, Body, Sprite } from 'react-game-kit';
 export default class Character extends Component {
   static propTypes = {
     keys: PropTypes.object,
-    onEnterBuilding: PropTypes.func,
-    store: PropTypes.object,
+    side: PropTypes.string,
+    isActive: PropTypes.bool,
+    fighter: PropTypes.string
   };
 
   static contextTypes = {
@@ -22,11 +22,15 @@ export default class Character extends Component {
     super(props);
 
     this.loopID = null;
-    // this.isJumping = false;
+    this.side = props.side;
+    this.isActive = props.isActive;
+    this.fighter = props.fighter;
     this.isPunching = false;
     this.isKicking = false;
     this.isUltraing = false;
-    // this.isLeaving = false;
+    this.isKOd = false;
+    this.isWon = false;
+    this.isBlocked =false;
     this.lastX = 0;
 
     this.state = {
@@ -35,7 +39,7 @@ export default class Character extends Component {
       spritePlaying: true,
       stageX: 0,
       characterPosition: {
-        x: 0,
+        x: this.side == 'l' ? 0 : 600,
         y: 0
       }
     };
@@ -44,6 +48,10 @@ export default class Character extends Component {
     this.punch = this.punch.bind(this);
     this.kick = this.kick.bind(this);
     this.ultra = this.ultra.bind(this);
+    this.KO = this.KO.bind(this);
+    this.victory = this.victory.bind(this);
+    this.block = this.block.bind(this);
+    
     this.checkKeys = this.checkKeys.bind(this);
     this.update = this.update.bind(this);
   }
@@ -74,25 +82,27 @@ export default class Character extends Component {
     const x = this.state.characterPosition.x;
 
     return (
-      <div style={this.getWrapperStyles()}>
-        <Body
-          args={[x, 84, 600, 600]}
-          inertia={Infinity}
-          ref={b => {
-            this.body = b;
-          }}
-        >
-          <Sprite
-            repeat={this.state.repeat}
-            onPlayStateChanged={this.handlePlayStateChanged}
-            src="./src/assets/ethbafighter_s.png"
-            scale={this.context.scale}
-            state={this.state.characterState}
-            steps={[2, 2, 0, 2]}
-            tileHeight={600}
-            tileWidth={600}
-          />
-        </Body>
+      <div>
+        <div style={this.getWrapperStyles()}>
+          <Body
+            args={[x, 84, 600, 600]}
+            inertia={Infinity}
+            ref={b => {
+              this.body = b;
+            }}
+          >
+            <Sprite
+              repeat={this.state.repeat}
+              onPlayStateChanged={this.handlePlayStateChanged}
+              src={"./src/assets/fighter"+this.fighter+"_"+this.side+".png"}
+              scale={this.context.scale}
+              state={this.state.characterState}
+              steps={[2, 2, 0, 2, 1, 2, 1]}
+              tileHeight={600}
+              tileWidth={600}
+            />
+          </Body>
+        </div>
       </div>
     );
   }
@@ -131,10 +141,26 @@ export default class Character extends Component {
     });
   };
 
-  ko() {
-    this.isUltraing = true;
+  KO() {
+    this.isKOd = true;
     this.setState({
-      characterState: 2,
+      characterState: 6,
+      repeat: false,
+    });
+  };
+
+  block() {
+    this.isBlocked = true;
+    this.setState({
+      characterState: 4,
+      repeat: false,
+    });
+  };
+
+  victory() {
+    this.isWon = true;
+    this.setState({
+      characterState: 5,
       repeat: false,
     });
   };
@@ -146,28 +172,40 @@ export default class Character extends Component {
 
     let characterState = 2;
 
-    if (keys.isDown(75)) {
-      // if (shouldMoveStageLeft) {
-      //   this.state.setStageX(this.state.stageX + 5);
-      // }
+    if (this.isActive) {
+      if (keys.isDown(75)) {
+        // if (shouldMoveStageLeft) {
+        //   this.state.setStageX(this.state.stageX + 5);
+        // }
 
-      this.move(body, -5);
-      this.kick();
-      characterState = 1;
-    } else if (keys.isDown(80)) {
-      this.move(body, 5);
-      this.punch();
-      characterState = 0;
-    } else if (keys.isDown(85)) {
-      this.move(body, 5);
-      this.ultra();
-      characterState = 3;
+        this.move(body, -5);
+        this.kick();
+        characterState = 1;
+      } else if (keys.isDown(80)) {
+        this.move(body, 5);
+        this.punch();
+        characterState = 0;
+      } else if (keys.isDown(85)) {
+        this.move(body, 5);
+        this.ultra();
+        characterState = 3;
+      } else if (keys.isDown(keys.LEFT)) {
+        this.KO();
+        characterState = 6;
+      } else if (keys.isDown(keys.RIGHT)) {
+        this.victory();
+        characterState = 5;
+      } else if (keys.isDown(keys.SPACE)) {
+        this.block();
+        characterState = 4;
+      }
+
+      this.setState({
+        characterState,
+        repeat: characterState < 7,
+      });
+
     }
-
-    this.setState({
-      characterState,
-      repeat: characterState < 4,
-    });
   };
 
   update() {

@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
+// import bgImage from './assets/background.jpg';
 
 import Matter from 'matter-js';
 
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
 import Character from './character';
-import GameStore from './stores/game-store';
 
-class App extends Component {
+class Fight extends Component {
   // static propTypes = {
   //   onLeave: PropTypes.func,
   // };
@@ -32,17 +32,29 @@ class App extends Component {
     ]);
   }
 
-  // componentWillUnmount() {
-  //   this.stopMusic();
-  //   this.keyListener.unsubscribe();
-  // }
+  componentWillUnmount() {
+    // this.stopMusic();
+    this.keyListener.unsubscribe();
+  }
 
   render() {
+    let stageStyle = {
+      backgroundImage: "url('./src/assets/background.jpg')"
+    };
     return (
       <Loop>
-        <Stage style={{ background: '#3a9bdc' }}>
+        <Stage style={ stageStyle }>
           <World onInit={this.physicsInit}>
             <Character
+              fighter={this.fighters[0]}
+              isActive={false}
+              side="l"
+              keys={this.KeyListener}
+            />
+            <Character
+              fighter={this.fighters[1]}
+              isActive={true}
+              side="r"
               keys={this.KeyListener}
             />
           </World>
@@ -72,6 +84,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.KeyListener = new KeyListener();
+    this.fighters = ['Vitalik', 'Satoshi'];
   }
 }
 

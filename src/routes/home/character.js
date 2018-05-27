@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
 import Matter from 'matter-js';
 
 import { AudioPlayer, Body, Sprite } from 'react-game-kit';
@@ -29,6 +28,7 @@ export default class Character extends Component {
     this.isActive = props.isActive;
     this.fighter = props.fighter;
     this.health = props.health;
+
     this.isPunching = false;
     this.isKicking = false;
     this.isUltraing = false;
@@ -43,9 +43,10 @@ export default class Character extends Component {
       spritePlaying: true,
       stageX: 0,
       characterPosition: {
-        x: this.side == 'l' ? 0 : 600,
-        y: 0
-      }
+        x: this.side == 'l' ? 0 : 400,
+        y: 20
+      },
+      characterHealth: 2000
     };
 
     this.handlePlayStateChanged = this.handlePlayStateChanged.bind(this);
@@ -88,7 +89,9 @@ export default class Character extends Component {
     return (
       <div>
         <div style={this.getWrapperStyles()}>
-          <HealthBar />
+          <HealthBar 
+            health={this.state.characterHealth}
+          />
           <Body
             args={[x, 84, 600, 600]}
             inertia={Infinity}
@@ -102,7 +105,7 @@ export default class Character extends Component {
               src={"./src/assets/fighter"+this.fighter+"_"+this.side+".png"}
               scale={this.context.scale}
               state={this.state.characterState}
-              steps={[2, 2, 0, 2, 1, 2, 1]}
+              steps={[2, 2, 2, 2, 1, 2, 1]}
               tileHeight={600}
               tileWidth={600}
             />
@@ -166,9 +169,15 @@ export default class Character extends Component {
     this.isWon = true;
     this.setState({
       characterState: 5,
-      repeat: false,
+      repeat: true,
     });
   };
+
+  loseHealth(point) {
+    this.setState({
+      characterHealth: (this.state.characterHealth - 20 * point) >= 0 ? (this.state.characterHealth - 20 * point) : 0
+    });
+  }
 
   checkKeys(shouldMoveStageLeft, shouldMoveStageRight) {
     const { keys, store } = this.props;
@@ -190,6 +199,7 @@ export default class Character extends Component {
         this.punch();
         characterState = 0;
       } else if (keys.isDown(85)) {
+        this.loseHealth(2);
         this.move(body, 5);
         this.ultra();
         characterState = 3;
@@ -206,14 +216,13 @@ export default class Character extends Component {
 
       this.setState({
         characterState,
-        repeat: characterState < 7,
+        repeat: characterState < 6,
       });
 
     }
   };
 
   update() {
-    const { store } = this.props;
     const { body } = this.body;
 
     const midPoint = Math.abs(this.state.stageX) + 448;
@@ -222,11 +231,21 @@ export default class Character extends Component {
     const shouldMoveStageRight =
       body.position.x > midPoint && this.state.stageX > -2048;
 
-    const velY = parseFloat(body.velocity.y.toFixed(10));
+    // const velY = parseFloat(body.velocity.y.toFixed(10));
 
-    if (velY === 0) {
-      this.isJumping = false;
-      Matter.Body.set(body, 'friction', 0.9999);
+    // if (velY === 0) {
+    //   this.isJumping = false;
+    //   Matter.Body.set(body, 'friction', 0.9999);
+    // }
+
+    if (this.state.characterHealth == 0) {
+      console.log("KO!");
+      this.KO();
+      characterState = 6;
+      this.setState({
+        characterState,
+        repeat: true,
+      });
     }
 
     if (!this.isJumping && !this.isPunching && !this.isLeaving) {

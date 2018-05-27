@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
-// import bgImage from './assets/background.jpg';
 
 import Matter from 'matter-js';
 
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
 import Character from './character';
-import HealthBar from './healthBar';
 
 class Fight extends Component {
   // static propTypes = {
@@ -39,8 +37,11 @@ class Fight extends Component {
   }
 
   render() {
+    // const bgStyles = {
+    //   backgroundImage: "url('./src/assets/background.jpg') top center fixed"
+    // };
     let stageStyle = {
-      background: "url('./src/assets/background.jpg') top center fixed",
+      background: "url('./src/assets/backgroundFight.jpg') top center fixed",
     };
     return (
       <Loop>
@@ -48,14 +49,14 @@ class Fight extends Component {
           <World onInit={this.physicsInit}>
             <Character
               fighter={this.fighters[0].name}
-              isActive={false}
+              isActive={true}
               side="l"
               keys={this.KeyListener}
               health={this.fighters[0].health}
             />
             <Character
               fighter={this.fighters[1].name}
-              isActive={true}
+              isActive={false}
               side="r"
               keys={this.KeyListener}
               health={this.fighters[1].health}
@@ -67,7 +68,7 @@ class Fight extends Component {
   }
 
   physicsInit(engine) {
-    const ground = Matter.Bodies.rectangle(512 * 3, 448, 1024 * 3, 64, {
+    const ground = Matter.Bodies.rectangle(0, 448, 1024 * 3, 64, {
       isStatic: true,
     });
 
@@ -89,11 +90,11 @@ class Fight extends Component {
     this.KeyListener = new KeyListener();
     let V = {
       name: 'Vitalik',
-      health: 1
+      health: 2000
     }
     let S = {
       name: 'Satoshi',
-      health: 1
+      health: 2000
     }
     this.fighters = [V, S];
   }

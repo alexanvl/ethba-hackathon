@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+}
+
+.balanceBar {
+  width: 60%;
+  height: 20px;
+  border: 2px #ccc solid;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.balanceSection {
+  display: inline-block;
+  height: 20px;
+  font-size: 10pt;
+  vertical-align: top;
+  text-align: center;
+}
+
+.balanceSection p {
+  margin: 0;
+  padding: 3px;
+}
+
+.spent {
+  background-color: #83EC8F;
+  transition: width 1s ease-in-out;
+}
+
+.spending {
+  background-color: #F2EE45;
+  transition: width 1s ease-in-out;
+}
+
+.left {
+  background-color: #f9003b;
+  transition: width 1s ease-in-out;
+}

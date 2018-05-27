@@ -1,8 +1,10 @@
-import React, { Component, Dimensions } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { observer } from 'mobx-react';
 import Matter from 'matter-js';
 
 import { AudioPlayer, Body, Sprite } from 'react-game-kit';
+import HealthBar from './healthBar';
 
 // @observer
 export default class Character extends Component {
@@ -10,7 +12,8 @@ export default class Character extends Component {
     keys: PropTypes.object,
     side: PropTypes.string,
     isActive: PropTypes.bool,
-    fighter: PropTypes.string
+    fighter: PropTypes.string,
+    health: PropTypes.number
   };
 
   static contextTypes = {
@@ -25,6 +28,7 @@ export default class Character extends Component {
     this.side = props.side;
     this.isActive = props.isActive;
     this.fighter = props.fighter;
+    this.health = props.health;
     this.isPunching = false;
     this.isKicking = false;
     this.isUltraing = false;
@@ -84,6 +88,7 @@ export default class Character extends Component {
     return (
       <div>
         <div style={this.getWrapperStyles()}>
+          <HealthBar />
           <Body
             args={[x, 84, 600, 600]}
             inertia={Infinity}
@@ -94,7 +99,7 @@ export default class Character extends Component {
             <Sprite
               repeat={this.state.repeat}
               onPlayStateChanged={this.handlePlayStateChanged}
-              src={"images/fighter"+this.fighter+"_"+this.side+".png"}
+              src={"./src/assets/fighter"+this.fighter+"_"+this.side+".png"}
               scale={this.context.scale}
               state={this.state.characterState}
               steps={[2, 2, 0, 2, 1, 2, 1]}
@@ -168,7 +173,6 @@ export default class Character extends Component {
   checkKeys(shouldMoveStageLeft, shouldMoveStageRight) {
     const { keys, store } = this.props;
     const { body } = this.body;
-    console.log(keys);
 
     let characterState = 2;
 

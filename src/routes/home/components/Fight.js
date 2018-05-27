@@ -6,6 +6,7 @@ import Matter from 'matter-js';
 
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
 import Character from './character';
+import HealthBar from './healthBar';
 
 class Fight extends Component {
   // static propTypes = {
@@ -39,23 +40,25 @@ class Fight extends Component {
 
   render() {
     let stageStyle = {
-      backgroundImage: "url('./src/assets/background.jpg')"
+      background: "url('./src/assets/background.jpg') top center fixed",
     };
     return (
       <Loop>
         <Stage style={ stageStyle }>
           <World onInit={this.physicsInit}>
             <Character
-              fighter={this.fighters[0]}
+              fighter={this.fighters[0].name}
               isActive={false}
               side="l"
               keys={this.KeyListener}
+              health={this.fighters[0].health}
             />
             <Character
-              fighter={this.fighters[1]}
+              fighter={this.fighters[1].name}
               isActive={true}
               side="r"
               keys={this.KeyListener}
+              health={this.fighters[1].health}
             />
           </World>
         </Stage>
@@ -84,7 +87,15 @@ class Fight extends Component {
   constructor(props) {
     super(props);
     this.KeyListener = new KeyListener();
-    this.fighters = ['Vitalik', 'Satoshi'];
+    let V = {
+      name: 'Vitalik',
+      health: 1
+    }
+    let S = {
+      name: 'Satoshi',
+      health: 1
+    }
+    this.fighters = [V, S];
   }
 }
 

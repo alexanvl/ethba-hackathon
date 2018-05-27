@@ -1,6 +1,6 @@
 import React, { Component, Dimensions } from 'react';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
+// import { observer } from 'mobx-react';
 import Matter from 'matter-js';
 
 import { AudioPlayer, Body, Sprite } from 'react-game-kit';
@@ -142,7 +142,7 @@ export default class Character extends Component {
   checkKeys(shouldMoveStageLeft, shouldMoveStageRight) {
     const { keys, store } = this.props;
     const { body } = this.body;
-    console.log(keys);
+    // console.log(keys);
 
     let characterState = 2;
 

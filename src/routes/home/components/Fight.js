@@ -5,9 +5,14 @@ import Matter from 'matter-js';
 
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
 import Character from './character';
-import GameStore from './stores/game-store';
+//import GameStore from './stores/game-store';
+import { init } from '../../../store/actions/layer2lib';
+const Web3 = require('web3')
+const web3 = new Web3()
+web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
 
-class App extends Component {
+
+class Fight extends Component {
   // static propTypes = {
   //   onLeave: PropTypes.func,
   // };
@@ -75,4 +80,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Fight;

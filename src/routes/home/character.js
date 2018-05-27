@@ -94,7 +94,7 @@ export default class Character extends Component {
             <Sprite
               repeat={this.state.repeat}
               onPlayStateChanged={this.handlePlayStateChanged}
-              src={"./src/assets/fighter"+this.fighter+"_"+this.side+".png"}
+              src={"images/fighter"+this.fighter+"_"+this.side+".png"}
               scale={this.context.scale}
               state={this.state.characterState}
               steps={[2, 2, 0, 2, 1, 2, 1]}

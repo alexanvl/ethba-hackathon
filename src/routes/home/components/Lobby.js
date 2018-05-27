@@ -42,7 +42,12 @@ class Lobby extends Component {
       </div>)}
       <h1>Current Proposal</h1>
       {proposal && <div>
-        from: {proposal.agreement.partyA}<button onClick={_ => this.props.joinAgreement(proposal.agreement, proposal.state)}>Join Agreement</button>
+        from: {proposal.agreement.partyA}
+        {proposal.agreement.openPending && <button onClick={_ => this.props.joinAgreement(proposal.agreement, proposal.state)}>Join Agreement</button>}
+        {!proposal.agreement.openPending && <button onClick={_ => this.props.updateAgreement(proposal.agreement)}>Update Agreement</button>}
+        {<button onClick={_ => this.props.openChannel(proposal.agreement)}>Open Channel</button>}
+        {proposal.Agreement && proposal.chan && <button onClick={_ => this.props.joinChannel(proposal.chan, proposal.Agreement)}>Join Channel</button>}
+        {proposal.Agreement && !proposal.chan && <button onClick={_ => this.props.updateAcceptedChannel(proposal.Agreement)}>Update Accepted Channel</button>}
       </div>}
     </div>;
   }

@@ -2,8 +2,8 @@ const actions = {
   INIT: 'INIT',
 };
 
-export function init(privateKey) {
-  return { type: actions.INIT, privateKey };
+export function init(privateKey, publicKey) {
+  return { type: actions.INIT, privateKey, publicKey };
 }
 
 export default actions;
